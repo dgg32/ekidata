@@ -1,0 +1,21 @@
+//for 5
+CREATE CONSTRAINT IF NOT EXISTS FOR (s:Station) REQUIRE s.id IS UNIQUE;
+
+
+
+//for 4
+CREATE CONSTRAINT ON (s:Station) ASSERT s.id IS UNIQUE;
+
+LOAD CSV WITH HEADERS FROM 'file:///stations.csv' AS row MERGE (s:Station {id: row.id, name: row.name, lat: row.lat, lng: row.lng, pref: row.pref, population: coalesce(row.population, 0), elevation: coalesce(row.elevation, 0)});
+
+LOAD CSV WITH HEADERS FROM 'file:///connections.csv' AS row MERGE (a:Station {id: row.START_ID}) MERGE (b:Station {id: row.END_ID}) MERGE (a)-[r:CONNECTS {line: row.line, name: row.name}]->(b);
+
+
+//for memgraph
+CREATE CONSTRAINT ON (s:Station) ASSERT s.id IS UNIQUE;
+
+LOAD CSV FROM '/stations.csv' WITH HEADER AS row MERGE (s:Station {id: row.id, name: row.name, lat: toFloat(row.lat), lng: toFloat(row.lng), pref: row.pref, population: coalesce(toFloat(row.population), 0), elevation: coalesce(toFloat(row.elevation), 0)});
+
+LOAD CSV FROM '/connections.csv' WITH HEADER AS row MERGE (a:Station {id: row.START_ID}) MERGE (b:Station {id: row.END_ID}) MERGE (a)-[r:CONNECTS {line: row.line, name: row.name}]->(b);
+
+MATCH p=(s:Station)-[r:CONNECTS]-(b:Station) RETURN p

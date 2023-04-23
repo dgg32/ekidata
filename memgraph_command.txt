@@ -1,0 +1,24 @@
+docker container create --name mg_import_helper -v mg_import:/import-data busybox
+
+
+docker cp connections.csv mg_import_helper:/import-data
+
+
+docker cp stations.csv mg_import_helper:/import-data
+
+
+docker run -v mg_lib:/var/lib/memgraph -v mg_etc:/etc/memgraph -v mg_import:/import-data --entrypoint=mg_import_csv memgraph/memgraph-platform --nodes Station=/import-data/stations.csv --relationships Connection=/import-data/connections.csv --data-directory /var/lib/memgraph true --storage-properties-on-edges true
+
+
+
+http://localhost:3000
+
+
+docker cp connections.csv 0dee3cc0320f:connections.csv
+
+docker cp stations.csv 0dee3cc0320f:stations.csv
+
+
+docker exec -it 0dee3cc0320f bash
+
+su -c 'mg_import_csv --nodes Station=/stations.csv --relationships Connection=/connections.csv' memgraph
