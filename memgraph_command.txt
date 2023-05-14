@@ -22,3 +22,4 @@ docker cp stations.csv 0dee3cc0320f:stations.csv
 docker exec -it 0dee3cc0320f bash
 
 su -c 'mg_import_csv --nodes Station=/stations.csv --relationships Connection=/connections.csv' memgraph
+
